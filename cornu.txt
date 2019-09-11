@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Aug 23 18:01:56 2019
+
+@author: danyeo
+"""
+
+""" 
+This is sourcecode to make an interactive Cornu spiral calculator 
+First need to plot an overlay of the cornu spiral before implementing the calculator 
+"""
+import numpy as np 
+from math import *
+from scipy import integrate
+import matplotlib.pyplot as plt
+
+
+
+def cos1(x):
+    a=np.cos(np.pi*x**2/2)
+    return a
+def sin1(x):
+    a=np.sin(np.pi*x**2/2)
+    return a
+func =lambda u: integrate.quad(cos1,0,u)[0]
+func1 =lambda u: integrate.quad(sin1,0,u)[0]
+
+'''defining the spanning vector'''
+def function(x,y):
+    k=list()
+    z=list()
+    for i in range(-500,500,1):
+       k.append(func(0.02*i))
+       z.append(func1(0.02*i))
+    a=[func(x),func1(x),func(y),func1(y)] 
+    plt.arrow(a[0],a[1],a[2]-a[0],a[3]-a[1], linewidth=1, head_width=0.10, 
+              head_length=0.05,length_includes_head=True,fc='black',zorder=2)
+    plt.plot(k,z)
+    #plt.plot((a[0],a[2]),(a[1],a[3]))  
+    real=a[3]-a[1]
+    im=a[2]-a[0]
+    
+    k=r'$\Psi =%.3f + %.3f i$' %(real,im)
+    s='Limits:'+'\n'+ r'$ \Psi 1 = %.3f + %.3f i $'%(a[0],a[1])+'\n'+r'$\Psi 2 = %.3f + %.3f \i$'%(a[2],a[3]) 
+    plt.xlim(-1,1)
+    plt.ylim(-1,1)
+    plt.xlabel(r'$\Re e$', fontsize=15)
+    plt.ylabel(r'Im', fontsize=15)
+    plt.title('Cornu Phasor Calculator', fontsize=20)
+    plt.text(-0.4,0.8,k,fontsize=14)
+    plt.text(-0.8, 0.3, s, fontsize=10)
+
+
+def sign(x):
+    if x<0:
+        x1=-1
+    else:
+        x1=1
+    return x1    
+
+    
+while True:
+    x=input('Enter lower limit:')
+    try:
+        x=float(x)
+        break
+    except:
+        print('This is not a number!')
+
+    
+    
+while True:
+    y=input('Enter upper limit:')
+    try:
+        y=float(y)
+        break
+    except:
+        print('This is not a number!')
+        
+print('\n'+'Lower limit: '+ str(x)+'\n'+'Upper limit: '+ str(y))
+
+'''The integral experiences errors at higher integration limits but the 
+values can be approximated as +/- inf'''
+if not abs(x)<26:
+    x=sign(x)*26
+if not abs(y)<26:
+    y=sign(y)*26
+function(x,y)
